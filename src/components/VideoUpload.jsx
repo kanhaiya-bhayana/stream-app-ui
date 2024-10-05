@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { CiYoutube } from "react-icons/ci";
-import { Button, Card, Label, TextInput, Textarea, Spinner } from 'flowbite-react';
+import { Button, Card, Label, TextInput, Textarea, Spinner, Alert } from 'flowbite-react';
 import { HiCheckCircle, HiExclamationCircle } from 'react-icons/hi';  // Import a success icon
 import axios from 'axios';
 
 const VideoUpload = () => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const[showFileSelectionError, setShowFileSelectionError] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [errorUploading, setErrorUploading] = useState(false); // Error flag
@@ -26,8 +27,9 @@ const VideoUpload = () => {
   function resetForm() {
     setSelectedFile(null);
     setMetadata({ title: "", description: "" });
-    // setProgress(0);
-    // setMessage("");
+    setProgress(0);
+    setMessage("");
+    setErrorUploading(false);
   }
 
   // Generic input change handler
@@ -43,7 +45,8 @@ const VideoUpload = () => {
     formEvent.preventDefault();
 
     if (!selectedFile) {
-      alert("Select file first.");
+      // alert("Select file first.");
+      setShowFileSelectionError(true);
       return;
     }
     saveFileToServer(selectedFile, metadata);
@@ -84,7 +87,10 @@ const VideoUpload = () => {
   return (
     <div className="flex w-full justify-center">
       <Card className="max-w-3xl w-full">
-        <h1 className='dark:text-white'>Upload videos</h1>
+        <h1 className='dark:text-white text-2xl'>Upload videos</h1>
+        { showFileSelectionError && <Alert color="success" onDismiss={() => setShowFileSelectionError(false)}>
+          <span className="font-medium">Error!</span> Please select the file first to proceed further.
+        </Alert>}
         <form className="space-y-4" onSubmit={handleForm}>
           {/* Title input field */}
           <div>
@@ -131,7 +137,7 @@ const VideoUpload = () => {
                 hover:file:bg-violet-100"
               />
             </label>
-            <Button type="button" color="gray" onClick={resetForm}>Reset</Button> {/* Reset button */}
+            <Button type="button" disabled={uploading} color="gray" onClick={resetForm}>Reset</Button> {/* Reset button */}
             <Button type="submit" disabled={uploading}>Upload</Button>
           </div>
 
