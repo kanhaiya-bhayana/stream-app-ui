@@ -4,7 +4,10 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import VideoUpload from './components/VideoUpload'
 import { HR } from "flowbite-react";
+import axios from 'axios';
 
+axios.defaults.withCredentials = false;
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 function App() {
   const [count, setCount] = useState(0)
 
